@@ -569,6 +569,7 @@ describe("web inbound media saves with extension", () => {
     // Recorded WhatsApp Web stickers carry the bare host as url (WhiskeySockets/Baileys#1085, #1557).
     { urlHost: "web.whatsapp.net", fetchHost: "media-conn.example", bareUrl: true },
     { urlHost: "mmg.whatsapp.net", fetchHost: "mmg.whatsapp.net" },
+    { urlHost: "custom-cdn.example", fetchHost: "custom-cdn.example" },
   ])(
     "downloads a sticker whose url is on $urlHost from $fetchHost",
     async ({ urlHost, fetchHost, bareUrl }, { onTestFinished }) => {
@@ -619,6 +620,7 @@ describe("web inbound media saves with extension", () => {
 
       const inbound = await waitForMessage(onMessage);
       expect(fetchSpy.mock.calls.map(([input]) => resolveRequestUrl(input))).toEqual([fetchUrl]);
+      expect(inbound.payload.media?.type).toBe("image/webp");
       const mediaPath = requireMediaPath(inbound.payload.media?.path);
       expect(await fs.readFile(mediaPath)).toEqual(sticker);
     },
